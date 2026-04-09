@@ -12,10 +12,9 @@ import Foundation
 final class AppState: ObservableObject {
     @Published var isEnabled = true
 
-    private let scrollCooldown: TimeInterval = 0.5
     let audioPlayer = AudioPlayer()
     private let inputMonitor = InputMonitor()
-    private var lastScrollPlaybackAt: Date?
+    private let scrollSessionTracker = ScrollSessionTracker()
 
     init() {
         inputMonitor.startMonitoring(
@@ -40,13 +39,7 @@ final class AppState: ObservableObject {
 
     private func playScrollTriggeredSound() {
         guard isEnabled else { return }
-
-        let now = Date()
-        if let lastScrollPlaybackAt, now.timeIntervalSince(lastScrollPlaybackAt) < scrollCooldown {
-            return
-        }
-
-        lastScrollPlaybackAt = now
-        audioPlayer.play(category: .scroll)
+        guard let category = scrollSessionTracker.registerEvent() else { return }
+        audioPlayer.play(category: category)
     }
 }

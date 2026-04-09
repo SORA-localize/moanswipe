@@ -22,7 +22,9 @@ final class AudioPlayer {
 
     enum SoundCategory: CaseIterable {
         case click
-        case scroll
+        case scrollShort
+        case scrollSustained
+        case scrollIntense
     }
 
     private struct AudioClip: Equatable {
@@ -38,9 +40,13 @@ final class AudioPlayer {
             AudioClip(resourceName: "click_soft_01"),
             AudioClip(resourceName: "click_sharp_01"),
         ],
-        .scroll: [
+        .scrollShort: [
             AudioClip(resourceName: "scroll_soft_01"),
+        ],
+        .scrollSustained: [
             AudioClip(resourceName: "scroll_flow_01"),
+        ],
+        .scrollIntense: [
             AudioClip(resourceName: "scroll_intense_01"),
         ],
     ]
