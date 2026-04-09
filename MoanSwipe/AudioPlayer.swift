@@ -86,11 +86,7 @@ final class AudioPlayer {
             return nil
         }
 
-        if let preferredSlot = voiceSlots.first(where: { $0.clip == clip && !$0.player.isPlaying }) {
-            return preferredSlot
-        }
-
-        return voiceSlots.first(where: { !$0.player.isPlaying })
+        return voiceSlots.first(where: { $0.clip == clip && !$0.player.isPlaying })
     }
 
     private func preloadVoiceSlots() {

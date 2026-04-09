@@ -83,6 +83,7 @@
 **想定変更範囲**
 - [`MoanSwipe/InputMonitor.swift`](/Users/hori/Desktop/MoanSwipe/MoanSwipe/InputMonitor.swift)
 - [`MoanSwipe/AppState.swift`](/Users/hori/Desktop/MoanSwipe/MoanSwipe/AppState.swift)
+- [`MoanSwipe/AudioPlayer.swift`](/Users/hori/Desktop/MoanSwipe/MoanSwipe/AudioPlayer.swift)
 - 必要なら scroll session 用の新規ファイル 1 件
 
 **実装内容**
@@ -90,6 +91,8 @@
 - 一定時間イベントが途切れたら session 終了とみなす
 - 基本挙動は「scroll 開始時だけ 1 音」とする
 - 長時間継続した場合のみ段階変化可能な状態を作る
+- `short / sustained / intense` のような scroll カテゴリを実際の audio 選択へ接続する
+- `AudioPlayer` 側で scroll 用カテゴリごとの音声プール選択を扱えるようにする
 - `scrollCooldown` の責務を `AppState` から session 側へ移すか、最小化して残すかを明文化して実装する
 - 検証用ログを追加した場合は、Phase 完了までに撤去するか課題化する
 
@@ -99,7 +102,8 @@
 
 - 一般的な短い 2 本指 scroll を 5 回試行し、1 アクションで複数音が鳴ったと知覚される事象が 5 回中 1 回以下である
 - scroll 開始時、継続中、終了時を区別できる内部状態がある
-- 長い scroll に対して段階変化用の分類状態を保持できる
+- 短い scroll と長い scroll で異なるカテゴリ選択が可能になっている
+- 長い scroll に対して段階変化用の分類状態が実際の audio 選択へ接続されている
 - click 系の音再生 UX を壊していない
 - OFF 時は引き続き無音である
 - 音源欠損時でもクラッシュしない
@@ -143,6 +147,18 @@
 **回帰リスク**
 - click 系ロジックへ影響する可能性
 
+### 7.3 `AudioPlayer.swift` との差分
+
+- 現状の `scroll` は 1 カテゴリのみ
+- 変更後は `short / sustained / intense` など複数の scroll カテゴリを受けられるようにする
+
+**理由**
+- 親計画が要求する「異なるカテゴリ選択」を実際の音声プールへ接続するため
+
+**回帰リスク**
+- Phase 6 で成立した click 系 UX を巻き込む可能性
+- scroll 音源プールの切り替えミス
+
 ---
 
 ## 8. DRY / KISS評価
@@ -151,11 +167,13 @@
 
 - scroll session 管理は 1 か所に集約する
 - click と scroll の再生自体は既存 `AudioPlayer` を再利用する
+- scroll カテゴリ選択から音声プール選択への接続は `AudioPlayer` に集約する
 
 ### KISS
 
 - 初手では「scroll 開始時 1 音」を基本形にする
 - いきなり複雑な強度分類を入れず、まずは session 状態の導入を優先する
+- ただし親計画に合わせ、分類状態を持つだけで終わらせず、少なくとも異なるカテゴリ選択が音声プールへ接続されるところまでを Phase 7 の完了条件とする
 
 ---
 
@@ -209,6 +227,7 @@
 ## 14. 変更履歴
 
 - 2026-04-09 v1.0: Phase 7 専用計画書を新規作成
+- 2026-04-09 v1.1: 親計画との整合性レビューを反映。変更範囲に `AudioPlayer` を追加し、scroll カテゴリ選択を実際の音声プール選択へ接続する要件と Gate 条件を明確化
 
 ---
 
