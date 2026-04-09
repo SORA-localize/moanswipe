@@ -48,6 +48,7 @@ final class AudioPlayer {
         ],
         .scrollIntense: [
             AudioClip(resourceName: "scroll_intense_01"),
+            AudioClip(resourceName: "67"),
         ],
     ]
 
