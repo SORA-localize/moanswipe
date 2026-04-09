@@ -30,12 +30,12 @@ final class AppState: ObservableObject {
 
     func playTestSound() {
         guard isEnabled else { return }
-        audioPlayer.playTestClip()
+        audioPlayer.play(category: .click)
     }
 
     private func playTriggeredSound() {
         guard isEnabled else { return }
-        audioPlayer.playTestClip()
+        audioPlayer.play(category: .click)
     }
 
     private func playScrollTriggeredSound() {
@@ -47,6 +47,6 @@ final class AppState: ObservableObject {
         }
 
         lastScrollPlaybackAt = now
-        audioPlayer.playTestClip()
+        audioPlayer.play(category: .scroll)
     }
 }
